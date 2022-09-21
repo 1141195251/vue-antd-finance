@@ -111,7 +111,7 @@ export default {
       this.logging = false
       const loginRes = res.data
       if (loginRes.code == 200) {
-        setAuthorization({token: loginRes.data.token, expireAt: new Date(new Date() * 1 + loginRes.data.expireAt)})
+        setAuthorization({token: loginRes.data.token, expireAt: new Date(new Date() * 1 + loginRes.data.expireAt * 1000)})
         info().then(res => {
           const {username, roles, menus} = res.data.data
           this.setUser(username)

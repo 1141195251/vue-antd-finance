@@ -3,7 +3,6 @@
     <div v-if="this.extraImage && !isMobile" slot="extra" class="extraImg">
       <img :src="extraImage"/>
     </div>
-    <span slot="headerContent">hello world</span>
     <page-toggle-transition :disabled="animate.disabled" :animate="animate.name" :direction="animate.direction">
         <router-view ref="page" />
     </page-toggle-transition>

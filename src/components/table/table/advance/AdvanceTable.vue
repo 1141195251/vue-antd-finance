@@ -80,7 +80,7 @@
       rowClassName: Function,
       rowKey: [String, Function],
       rowSelection: Object,
-      // scroll: Object,
+      scroll: Object,
       showHeader: {type: Boolean, default: true},
       size: String,
       title: String,

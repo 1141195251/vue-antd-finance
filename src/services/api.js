@@ -4,6 +4,12 @@
 const BASE_URL = process.env.VUE_APP_API_BASE_URL
 module.exports = {
   LOGIN: `${BASE_URL}/service-admin/admin/login`,
-  ROUTES: `${BASE_URL}/routes`,
-  INFO: `${BASE_URL}/service-admin/admin/info`
+  INFO: `${BASE_URL}/service-admin/admin/info`,
+  USERLIST: `${BASE_URL}/service-admin/admin/list`,
+  USERSUPERLIST: `${BASE_URL}/service-admin/admin/superList`,
+  REGISTER: `${BASE_URL}/service-admin/admin/register`,
+  DELETEBYADMINID: `${BASE_URL}/service-admin/admin/delete`,
+  UPDATEBYADMINID: `${BASE_URL}/service-admin/admin/update`,
+  GETROLESBYADMINID: `${BASE_URL}/service-admin/admin/role`,
+  ADMINROLERELATIONLIST: `${BASE_URL}/service-admin/admin/adminRoleRelation/getList`
 }

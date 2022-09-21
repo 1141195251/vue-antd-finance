@@ -29,7 +29,11 @@ const routerMap = {
   },
   user: {
     name: '用户',
-    component: () => import('@/pages/demo')
+    component: view.page
+  },
+  role: {
+    name: '角色',
+    component: () => import('@/pages/auth')
   },
   menu: {
     name: '菜单',
@@ -38,6 +42,10 @@ const routerMap = {
   resource: {
     name: '资源',
     component: () => import('@/pages/demo')
+  },
+  userdetails: {
+    name: '用户详情',
+    component: () => import('@/pages/components/table')
   },
   exp403: {
     authority: '*',
