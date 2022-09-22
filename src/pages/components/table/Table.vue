@@ -233,64 +233,14 @@
     </div>
     <a-divider />
     <a-row>
-      <a-col span="12">
+      <a-col span="10">
         <a-card title="用户与角色" type="inner">
           <a slot="extra" href="#">more</a>
-          <a-table :data-source="roleRelationData" :columns="roleRelationColumns">
-            <div
-                slot="filterDropdown"
-                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                style="padding: 8px"
-            >
-              <a-input
-                  v-ant-ref="c => (searchInput = c)"
-                  :placeholder="`Search ${column.dataIndex}`"
-                  :value="selectedKeys[0]"
-                  style="width: 188px; margin-bottom: 8px; display: block;"
-                  @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                  @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-              />
-              <a-button
-                  type="primary"
-                  icon="search"
-                  size="small"
-                  style="width: 90px; margin-right: 8px"
-                  @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-              >
-                Search
-              </a-button>
-              <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
-                Reset
-              </a-button>
-            </div>
-            <a-icon
-                slot="filterIcon"
-                slot-scope="filtered"
-                type="search"
-                :style="{ color: filtered ? '#108ee9' : undefined }"
-            />
-            <template slot="customRender" slot-scope="text, record, index, column">
-      <span v-if="searchText && searchedColumn === column.dataIndex">
-        <template
-            v-for="(fragment, i) in text
-            .toString()
-            .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
-        >
-          <mark
-              v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-              :key="i"
-              class="highlight"
-          >{{ fragment }}</mark
-          >
-          <template v-else>{{ fragment }}</template>
-        </template>
-      </span>
-              <template v-else>
-                {{ text }}
-              </template>
-            </template>
-          </a-table>
+          <AdminRoleRelationTable/>
         </a-card>
+      </a-col>
+      <a-col span="13" style="margin-left: 30px">
+        <allocate-role/>
       </a-col>
     </a-row>
   </div>
@@ -298,12 +248,14 @@
 
 <script>
 import AdvanceTable from '@/components/table/advance/AdvanceTable'
+import AdminRoleRelationTable from './AdminRoleRelationTable'
+import AllocateRole from './AllocateRole'
 import {adminService as ds} from '@/services'
 
 
 export default {
   name: 'Table',
-  components: {AdvanceTable},
+  components: {AllocateRole, AdvanceTable, AdminRoleRelationTable},
   filters: {
     statusStr(val) {
       switch (val) {
@@ -322,14 +274,9 @@ export default {
     return {
       data: [],
       cacheData: [],
-      roleRelationData: [],
       loading: false,
       page: 1,
       pageSize: 10,
-      relationPageSettings: {
-        pageNum: 1,
-        pageSize: 8
-      },
       total: 0,
       visible: false,
       addForm: this.$form.createForm(this),
@@ -408,79 +355,10 @@ export default {
         },
       ],
       conditions: {},
-      roleRelationColumns: [
-        {
-          title: '编号',
-          dataIndex: 'id',
-        },
-        {
-          title: '角色',
-          dataIndex: 'roleName',
-          filters: [
-            {
-              text: '管理员',
-              value: '管理员',
-            },
-            {
-              text: '用户',
-              value: '用户',
-            },
-          ],
-          // specify the condition of filtering result
-          // here is that finding the name started with `value`
-          onFilter: (value, record) => record.roleName.indexOf(value) === 0,
-        },
-        {
-          title: '用户名',
-          dataIndex: 'adminUsername',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-              record.age
-                  .toString()
-                  .toLowerCase()
-                  .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          }
-        },
-        {
-          title: '用户昵称',
-          dataIndex: 'adminNickName',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-              record.age
-                  .toString()
-                  .toLowerCase()
-                  .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          }
-        }
-      ],
-      searchText: '',
-      searchInput: null,
-      searchedColumn: ''
     }
   },
   created() {
     this.getGoodList()
-    this.getAdminRoleRelatList()
   },
   methods: {
     // 获取用户列表
@@ -489,25 +367,21 @@ export default {
       const {page, pageSize, conditions} = this
       // 发送请求
       ds.superDataSource({page, pageSize, ...conditions}).then(result => {
-        const {list, pageNum, pageSize, total} = result.data.data
-        this.data = list
-        this.cacheData = this.data.map(item => ({ ...item }))
-        this.page = pageNum
-        this.total = total
-        this.pageSize = pageSize
-        this.loading = false
-      })
-    },
-    getAdminRoleRelatList() {
-      this.loading = true
-      const {pageNum, pageSize} = this.relationPageSettings
-      // 发送请求
-      ds.adminRoleRelationList({pageNum, pageSize}).then(result => {
-        const {list, pageNum, pageSize, total} = result.data.data
-        this.roleRelationData = list
-        this.relationPageSettings.pageNum = pageNum
-        this.total = total
-        this.relationPageSettings.pageSize = pageSize
+        const {code, message} = result.data
+        if(code === 200) {
+          const {list, pageNum, pageSize, total} = result.data.data
+          this.data = list
+          this.cacheData = this.data.map(item => ({ ...item }))
+          this.page = pageNum
+          this.total = total
+          this.pageSize = pageSize
+          this.loading = false
+        }else {
+          this.$message.error(message)
+          this.loading = false
+        }
+      }).catch(()=> {
+        this.$message.error('操作失败')
         this.loading = false
       })
     },
@@ -516,17 +390,17 @@ export default {
       this.conditions = conditions
       this.getGoodList()
     },
-    onSizeChange(current, size) {
-      this.page = 1
-      this.pageSize = size
-      this.getGoodList()
-    },
     onRefresh(conditions) {
       this.conditions = conditions
       this.getGoodList()
     },
     onReset(conditions) {
       this.conditions = conditions
+      this.getGoodList()
+    },
+    onSizeChange(current, size) {
+      this.page = 1
+      this.pageSize = size
       this.getGoodList()
     },
     onPageChange(page, pageSize) {
@@ -645,15 +519,6 @@ export default {
         this.data = newData;
       }
     },
-    handleSearch(selectedKeys, confirm, dataIndex) {
-      confirm();
-      this.searchText = selectedKeys[0];
-      this.searchedColumn = dataIndex;
-    },
-    handleReset(clearFilters) {
-      clearFilters();
-      this.searchText = '';
-    }
   }
 }
 </script>

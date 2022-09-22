@@ -1,4 +1,7 @@
-import {USERLIST, REGISTER, DELETEBYADMINID, UPDATEBYADMINID, GETROLESBYADMINID, USERSUPERLIST, ADMINROLERELATIONLIST} from '@/services/api'
+import {USERLIST, REGISTER, DELETEBYADMINID, UPDATEBYADMINID,
+        GETROLESBYADMINID, USERSUPERLIST, ADMINROLERELATIONLIST,
+        GETALLROLES, GETRANSFERVO, UPDATEROLESBYUSERNAME
+} from '@/services/api'
 import {request, METHOD} from '@/utils/request'
 
 /**
@@ -44,10 +47,25 @@ export async function getRolesByAdminId(adminId){
     return request(GETROLESBYADMINID + `/${adminId}`, METHOD.GET)
 }
 
-export async function adminRoleRelationList({pageNum, pageSize, }){
+export async function adminRoleRelationList({pageNum, pageSize}){
     return request(ADMINROLERELATIONLIST, METHOD.GET, {
         pageNum,
         pageSize
+    })
+}
+
+export async function getAllRoles(){
+    return request(GETALLROLES, METHOD.GET)
+}
+
+export async function getRoleTransfer(adminName){
+    return request(GETRANSFERVO + `/${adminName}`, METHOD.GET)
+}
+
+export async function updateRolesByUsername(username, roleIds){
+    return request(UPDATEROLESBYUSERNAME, METHOD.POST, {
+        username,
+        roleIds
     })
 }
 export default {
@@ -57,5 +75,8 @@ export default {
     deleteById,
     updateById,
     getRolesByAdminId,
-    adminRoleRelationList
+    adminRoleRelationList,
+    getAllRoles,
+    getRoleTransfer,
+    updateRolesByUsername
 }

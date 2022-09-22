@@ -11,5 +11,8 @@ module.exports = {
   DELETEBYADMINID: `${BASE_URL}/service-admin/admin/delete`,
   UPDATEBYADMINID: `${BASE_URL}/service-admin/admin/update`,
   GETROLESBYADMINID: `${BASE_URL}/service-admin/admin/role`,
-  ADMINROLERELATIONLIST: `${BASE_URL}/service-admin/admin/adminRoleRelation/getList`
+  ADMINROLERELATIONLIST: `${BASE_URL}/service-admin/admin/adminRoleRelation/getList`,
+  GETALLROLES: `${BASE_URL}/service-admin/role/listAll`,
+  GETRANSFERVO: `${BASE_URL}/service-admin/admin/role/transfer`,
+  UPDATEROLESBYUSERNAME: `${BASE_URL}/service-admin/admin/role/updateByUsername`
 }

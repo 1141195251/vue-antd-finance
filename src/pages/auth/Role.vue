@@ -113,7 +113,7 @@
           <a @click="deleteRecord(record.key)">
             <a-icon type="delete" />删除1
           </a>
-          <a @click="deleteRecord(record.key)" v-auth="`delete`">
+          <a @click="deleteRecord(record.key)" v-auth:`5`="`delete`">
             <a-icon type="delete" />删除2
           </a>
           <router-link :to="`/list/query/detail/${record.key}`" >详情</router-link>
@@ -130,8 +130,12 @@
 import StandardTable from '@/components/table/StandardTable'
 const columns = [
   {
-    title: '规则编号',
-    dataIndex: 'no'
+    title: '编号',
+    dataIndex: 'id'
+  },
+  {
+    title: '名称',
+    dataIndex: 'name'
   },
   {
     title: '描述',
@@ -140,7 +144,7 @@ const columns = [
   },
   {
     title: '服务调用次数',
-    dataIndex: 'callNo',
+    dataIndex: 'adminCount',
     sorter: true,
     needTotal: true,
     customRender: (text) => text + ' 次'
@@ -151,9 +155,8 @@ const columns = [
     slots: {title: 'statusTitle'}
   },
   {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
-    sorter: true
+    title: '创建时间',
+    dataIndex: 'createTime'
   },
   {
     title: '操作',
@@ -186,7 +189,10 @@ export default {
     }
   },
   authorize: {
-    deleteRecord: 'delete'
+    deleteRecord: {
+      check: 'delete',
+      type: '2'
+    }
   },
   methods: {
     deleteRecord(key) {
