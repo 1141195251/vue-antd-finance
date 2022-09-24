@@ -1,6 +1,8 @@
-import {USERLIST, REGISTER, DELETEBYADMINID, UPDATEBYADMINID,
-        GETROLESBYADMINID, USERSUPERLIST, ADMINROLERELATIONLIST,
-        GETALLROLES, GETRANSFERVO, UPDATEROLESBYUSERNAME
+import {
+    USERLIST, REGISTER, DELETEBYADMINID, UPDATEBYADMINID,
+    GETROLESBYADMINID, USERSUPERLIST, ADMINROLERELATIONLIST,
+    GETALLROLES, GETRANSFERVO, UPDATEROLESBYUSERNAME, UPDATEROLE,
+    DELETEROLEBYID, ADDROLE
 } from '@/services/api'
 import {request, METHOD} from '@/utils/request'
 
@@ -54,8 +56,12 @@ export async function adminRoleRelationList({pageNum, pageSize}){
     })
 }
 
-export async function getAllRoles(){
-    return request(GETALLROLES, METHOD.GET)
+export async function getAllRoles({pageNum, pageSize, ...conditions}){
+    return request(GETALLROLES, METHOD.POST, {
+        pageNum,
+        pageSize,
+        ...conditions
+    })
 }
 
 export async function getRoleTransfer(adminName){
@@ -68,6 +74,24 @@ export async function updateRolesByUsername(username, roleIds){
         roleIds
     })
 }
+
+export async function updateRoleById(id, {...conditions}){
+    return request(UPDATEROLE + `/${id}`, METHOD.POST, {
+        ...conditions
+    })
+}
+
+export async function deleteRoleById(id){
+    return request(DELETEROLEBYID + `/${id}`, METHOD.GET)
+}
+
+export async function addRole({...role}){
+    return request(ADDROLE, METHOD.POST, {
+        ...role
+    })
+}
+
+
 export default {
     dataSource,
     superDataSource,
@@ -78,5 +102,8 @@ export default {
     adminRoleRelationList,
     getAllRoles,
     getRoleTransfer,
-    updateRolesByUsername
+    updateRolesByUsername,
+    updateRoleById,
+    deleteRoleById,
+    addRole
 }

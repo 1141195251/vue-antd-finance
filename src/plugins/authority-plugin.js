@@ -7,12 +7,16 @@
 const getRoutePermission = (permissions, route) => permissions.find(item => item.id === route.meta.authority.permission)
 /**
  * 获取路由需要的角色
- * @param roles
+ * @param roles 持有的角色
  * @param route
  * @returns {Array[Role]}
  */
 const getRouteRole = (roles, route) => {
   const requiredRoles = route.meta.authority.role
+  // 判断当前路由获取到需要的角色或多个角色
+  // 如果当前路由没有设置需要的角色，则返回空数组
+  // 如果当前路由设置了需要的角色或者多个角色，在持有的角色item中过滤出和其需要的角色相一致的角色，然后返回此数组
+  // 意思就是在你持有的角色中筛选出和需要的角色一样的角色，没有返回空数组
   return requiredRoles ? roles.filter(item => requiredRoles.findIndex(required => required === item.id) !== -1) : []
 }
 /**
@@ -32,16 +36,25 @@ const hasInjected = (method) => method.toString().indexOf('//--auth-inject') !==
  * @returns {boolean}
  */
 const auth = function(authConfig, permission, role, permissions, roles) {
+  // authConfig的模板 deleteRecord: {
+  //                  check: 'delete',
+  //                  type: 'role'
+  //                 }
+
   const {check, type} = authConfig
+  // 检测到有check属性配置，并且此属性类型是一个函数时
   if (check && typeof check === 'function') {
     return check.apply(this, [permission, role, permissions, roles])
   }
+  // 检测到类型属性为‘permission’字符串时
   if (type === 'permission') {
     return checkFromPermission(check, permission)
-  } else if (type === 'role') {
-    return checkFromRoles(check, role)
+  } else if (type === 'role') {  // 检测到type属性为'role'字符串时
+    // 将需要的操作权限字符和持有的角色传进，开始检测是否有权限
+    return checkFromRoles(check, roles)
+
   } else {
-    return checkFromPermission(check, permission) || checkFromRoles(check, role)
+    return checkFromPermission(check, permission) || checkFromRoles(check, roles)
   }
 }
 
@@ -62,10 +75,12 @@ const checkFromPermission = function(check, permission) {
  * @returns {boolean}
  */
 const checkFromRoles = function(check, roles) {
+  // 如果未持有任何角色，则直接返回没有权限
   if (!roles) {
     return false
   }
   for (let role of roles) {
+    // 拿到其operation数组
     const {operation} = role
     if (operation && operation.indexOf(check) !== -1) {
       return true

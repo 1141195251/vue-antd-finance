@@ -23,21 +23,6 @@
       }"
     >
       <template
-          v-slot:email="{text, record}"
-      >
-        <span key="email">
-          <a-input
-              v-if="record.editable"
-              style="margin: -5px 0"
-              :value="text"
-              @change="e => handleChange(e.target.value, record.id, 'email')"
-          />
-          <template v-else>
-            {{ text }}
-          </template>
-        </span>
-      </template>
-      <template
           v-for="(col, index) in ['email', 'nickName', 'note']"
           :slot="col"
           slot-scope="{text, record}"
@@ -63,10 +48,10 @@
       </template>-
       <template v-slot:status="{text, record}" >
         <span key="status">
-          <a-switch default-checked
+          <a-switch
                     v-if="record.editable"
                     style="margin: -5px 0"
-                    :value="text"
+                    :default-checked="text ? true: false"
                     @change="e => handleChangeSwitch(e, record.id, 'status')">
             <a-icon slot="checkedChildren" type="check" />
             <a-icon slot="unCheckedChildren" type="close" />
@@ -117,7 +102,6 @@
           @close="onClose"
       >
         <a-form :form="addForm" layout="vertical"
-
                 hide-required-mark>
           <a-row :gutter="16">
             <a-col :span="12">
@@ -236,11 +220,11 @@
       <a-col span="10">
         <a-card title="用户与角色" type="inner">
           <a slot="extra" href="#">more</a>
-          <AdminRoleRelationTable/>
+          <AdminRoleRelationTable ref="relationTable"/>
         </a-card>
       </a-col>
       <a-col span="13" style="margin-left: 30px">
-        <allocate-role/>
+        <allocate-role @triggerRefresh="triggerRefresh" />
       </a-col>
     </a-row>
   </div>
@@ -471,6 +455,7 @@ export default {
       const target = newData.find(item => key === item.id);
       // 如果能找到 将修改的值赋给行记录的列字段
       if (target) {
+        console.log(value)
         target[column] = this.$options.filters['statusStr'](value)
         this.data = newData;
       }
@@ -519,6 +504,10 @@ export default {
         this.data = newData;
       }
     },
+    triggerRefresh() {
+      // 触发关系表组件更新数据
+      this.$refs.relationTable.getAdminRoleRelatList()
+    }
   }
 }
 </script>

@@ -89,6 +89,7 @@ export default {
       ds.updateRolesByUsername(this.edittingUser, roleIds).then(res => {
         const {code, message} = res.data
         if(code === 200) {
+          this.$emit('triggerRefresh')
           this.$message.success(message)
         }else {
           this.$message.error(message)
