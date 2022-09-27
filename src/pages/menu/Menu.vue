@@ -64,7 +64,7 @@
           :columns="columns"
           :data-source="data"
           :row-selection="rowSelection"
-          rowKey="id"
+          rowKey="key"
       >
         <template v-slot:action="text, record" >
           <a @click="() => showModal(record)">Edit</a>
@@ -265,7 +265,7 @@ export default {
         }
       }).then(() => {
         this.editingForm.setFieldsValue({
-          id: record.id,
+          id: record.key,
           // TODO 应该内连接查询添加父菜单名称字段
           parentId: record.parentId,
           title: record.title,
