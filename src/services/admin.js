@@ -2,7 +2,8 @@ import {
     USERLIST, REGISTER, DELETEBYADMINID, UPDATEBYADMINID,
     GETROLESBYADMINID, USERSUPERLIST, ADMINROLERELATIONLIST,
     GETALLROLES, GETRANSFERVO, UPDATEROLESBYUSERNAME, UPDATEROLE,
-    DELETEROLEBYID, ADDROLE
+    DELETEROLEBYID, ADDROLE, MENUTREELIST, GETMENUNAME, DELETEMENUBYID,
+    UPDATEMENU, ADDMENU, UPDATEROLEANDOPR, GETROLELIST, GETMENUBYROLEID, ALLOCATEMENU
 } from '@/services/api'
 import {request, METHOD} from '@/utils/request'
 
@@ -81,6 +82,12 @@ export async function updateRoleById(id, {...conditions}){
     })
 }
 
+export async function updateRoleAndOpr(id, {...conditions}){
+    return request(UPDATEROLEANDOPR + `/${id}`, METHOD.POST, {
+        ...conditions
+    })
+}
+
 export async function deleteRoleById(id){
     return request(DELETEROLEBYID + `/${id}`, METHOD.GET)
 }
@@ -91,7 +98,44 @@ export async function addRole({...role}){
     })
 }
 
+export async function getMenuTreeList(){
+    return request(MENUTREELIST, METHOD.GET)
+}
 
+export async function getMenuName(){
+    return request(GETMENUNAME, METHOD.GET)
+}
+
+export async function deleteMenuById(id) {
+    return request(DELETEMENUBYID + `/${id}`, METHOD.GET)
+}
+
+export async function updateMenuById({...params}) {
+    return request(UPDATEMENU + `/${params.id}`, METHOD.POST, {
+        ...params
+    })
+}
+
+export async function addMenu({...params}) {
+    return request(ADDMENU, METHOD.POST, {
+        ...params
+    })
+}
+
+export async function getRoleList() {
+    return request(GETROLELIST, METHOD.GET)
+}
+
+export async function getMenuByRoleId(roleId) {
+    return request(GETMENUBYROLEID + `/${roleId}`, METHOD.GET)
+}
+
+export async function allocateMenu(roleId, menuIds) {
+    return request(ALLOCATEMENU, METHOD.POST, {
+        roleId,
+        menuIds
+    })
+}
 export default {
     dataSource,
     superDataSource,
@@ -105,5 +149,14 @@ export default {
     updateRolesByUsername,
     updateRoleById,
     deleteRoleById,
-    addRole
+    addRole,
+    getMenuTreeList,
+    getMenuName,
+    deleteMenuById,
+    updateMenuById,
+    addMenu,
+    updateRoleAndOpr,
+    getRoleList,
+    getMenuByRoleId,
+    allocateMenu
 }

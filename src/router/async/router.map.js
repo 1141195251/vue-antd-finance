@@ -37,7 +37,11 @@ const routerMap = {
   },
   menu: {
     name: '菜单',
-    component: () => import('@/pages/demo')
+    component: view.page
+  },
+  menudetails: {
+    name: '菜单详情',
+    component: () => import('@/pages/menu')
   },
   resource: {
     name: '资源',

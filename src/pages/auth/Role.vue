@@ -159,21 +159,21 @@
             }"
       >
         <template
-            v-for="(col, index) in ['name', 'description']"
+            v-for="(col, index) in ['name', 'description','find', 'edit', 'add', 'delete']"
             :slot="col"
             slot-scope="{text, record}"
         >
-        <span :key="col">
-          <a-input
-              v-if="record.editable"
-              style="margin: -5px 0"
-              :value="text"
-              @change="e => handleChange(e.target.value, record.id, col)"
-          />
-          <template v-else>
-            {{ text }}
-          </template>
-        </span>
+          <span :key="col">
+            <a-input
+                v-if="record.editable"
+                style="margin: -5px 0"
+                :value="text"
+                @change="e => handleChange(e.target.value, record.id, col)"
+            />
+            <template v-else>
+              {{ text }}
+            </template>
+          </span>
         </template>
         <template
             v-slot:adminCount="{text, record}"
@@ -244,17 +244,19 @@
         </template>
       </standard-table>
     </div>
+    <AllocateMenu></AllocateMenu>
   </a-card>
 </template>
 
 <script>
 import StandardTable from '@/components/table/StandardTable'
+import AllocateMenu from '@/pages/auth/AllocateMenu'
 import {adminService as ds} from '@/services'
 
 
 export default {
   name: 'Role',
-  components: {StandardTable},
+  components: {StandardTable, AllocateMenu},
   data () {
     return {
       datasource: [],
@@ -299,6 +301,31 @@ export default {
           title: '创建时间',
           dataIndex: 'createTime',
           scopedSlots: {customRender: 'time'}
+        },
+        {
+          title: '操作权限',
+          children: [
+            {
+              title: '查询',
+              dataIndex: 'find',
+              scopedSlots: {customRender: 'find'}
+            },
+            {
+              title: '编辑',
+              dataIndex: 'edit',
+              scopedSlots: {customRender: 'edit'}
+            },
+            {
+              title: '添加',
+              dataIndex: 'add',
+              scopedSlots: {customRender: 'add'}
+            },
+            {
+              title: '删除',
+              dataIndex: 'delete',
+              scopedSlots: {customRender: 'delete'}
+            }
+          ]
         },
         {
           title: '操作',
@@ -419,7 +446,7 @@ export default {
         this.dataSource = newData;
         Object.assign(targetCache, target);
         this.cacheData = newCacheData;
-        ds.updateRoleById(key, target).then(res => {
+        ds.updateRoleAndOpr(key, target).then(res => {
           const {code, message} = res.data
           if(code === 200) {
             this.$message.success(message)
